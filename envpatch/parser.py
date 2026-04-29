@@ -44,6 +44,10 @@ class EnvFile:
     def keys(self):
         return self.as_dict.keys()
 
+    def get(self, key: str, default: Optional[str] = None) -> Optional[str]:
+        """Return the value for *key*, or *default* if the key is not present."""
+        return self.as_dict.get(key, default)
+
 
 def parse_env_string(text: str, source_path: Optional[Path] = None) -> EnvFile:
     """Parse a multi-line .env string and return an EnvFile."""
