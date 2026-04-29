@@ -70,3 +70,20 @@ def test_merge_result_is_envfile():
     result = merge(base, patch)
     assert isinstance(result, EnvFile)
     assert set(result.as_dict().keys()) == {"A", "B"}
+
+
+def test_merge_error_strategy_raises_on_first_conflict():
+    """When multiple keys conflict, ERROR strategy raises on the first one encountered."""
+    base = _make("FOO=old\nBAR=old")
+    patch = _make("FOO=new\nBAR=new")
+    with pytest.raises(MergeConflictError):
+        merge(base, patch, strategy=ConflictStrategy.ERROR)
+
+
+def test_merge_conflict_error_message_contains_key():
+    """MergeConflictError string representation should include the conflicting key."""
+    base = _make("FOO=old")
+    patch = _make("FOO=new")
+    with pytest.raises(MergeConflictError) as exc_info:
+        merge(base, patch, strategy=ConflictStrategy.ERROR)
+    assert "FOO" in str(exc_info.value)
