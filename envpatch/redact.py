@@ -36,6 +36,17 @@ def redact_value(key: str, value: Optional[str], placeholder: str = REDACTED_PLA
     return value
 
 
+def redact_dict(
+    data: dict, placeholder: str = REDACTED_PLACEHOLDER
+) -> dict:
+    """Return a copy of a key/value dict with secret values redacted.
+
+    Useful for redacting os.environ-style mappings or parsed env dicts
+    before logging or passing to external systems.
+    """
+    return {key: redact_value(key, value, placeholder) for key, value in data.items()}
+
+
 def safe_display(env_file: EnvFile, placeholder: str = REDACTED_PLACEHOLDER) -> str:
     """Render an EnvFile as a string with secrets redacted, safe for logging/display."""
     lines = []
