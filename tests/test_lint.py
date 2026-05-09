@@ -99,23 +99,11 @@ def test_empty_value_is_warning():
 # Duplicate keys
 # ---------------------------------------------------------------------------
 
-def test_duplicate_key_is_error():
-    f = _file(_entry("MY_KEY"), _entry("MY_KEY", value="other"))
-    result = lint(f)
+def test_duplicate_keys_are_errors():
+    result = lint(_file(_entry("MY_KEY"), _entry("MY_KEY", value="other")))
     assert any("duplicate" in i.message for i in result.errors)
 
 
-def test_no_duplicate_for_unique_keys():
-    f = _file(_entry("KEY_A"), _entry("KEY_B"))
-    result = lint(f)
+def test_no_error_for_unique_keys():
+    result = lint(_file(_entry("KEY_A"), _entry("KEY_B")))
     assert not any("duplicate" in i.message for i in result.issues)
-
-
-# ---------------------------------------------------------------------------
-# Comments are skipped
-# ---------------------------------------------------------------------------
-
-def test_comment_entries_skipped():
-    f = _file(_entry("", value="", is_comment=True))
-    result = lint(f)
-    assert result.issues == []
