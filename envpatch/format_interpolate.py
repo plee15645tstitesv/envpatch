@@ -48,6 +48,19 @@ def format_interpolated_file(
     return "\n".join(lines)
 
 
+def format_interpolation_errors(
+    errors: list[InterpolationError], colour: bool = False
+) -> str:
+    """Format multiple interpolation errors into a single human-readable string.
+
+    Each error is placed on its own line.  Returns an empty string when
+    the list is empty.
+    """
+    return "\n".join(
+        format_interpolation_error(err, colour=colour) for err in errors
+    )
+
+
 def format_interpolation_error(err: InterpolationError, colour: bool = False) -> str:
     """Human-readable message for an unresolved variable reference."""
     label = _c(_RED, "InterpolationError", colour)
