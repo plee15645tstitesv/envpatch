@@ -17,6 +17,13 @@ def _c(text: str, code: str, colour: bool) -> str:
     return f"{code}{text}{_ANSI_RESET}" if colour else text
 
 
+def _truncate(value: str, width: int) -> str:
+    """Truncate *value* to *width* characters, appending '…' if shortened."""
+    if len(value) <= width:
+        return value
+    return value[: width - 1] + "\u2026"
+
+
 def format_audit_list(entries: List[AuditEntry], *, colour: bool = False) -> str:
     """Return a human-readable table of audit entries."""
     if not entries:
@@ -28,11 +35,12 @@ def format_audit_list(entries: List[AuditEntry], *, colour: bool = False) -> str
     lines.append("-" * len(header))
 
     for idx, e in enumerate(entries, 1):
-        patch = e.patch_file or "-"
+        patch = _truncate(e.patch_file or "-", 24)
+        base = _truncate(e.base_file, 24)
         conflict_marker = _c(" !", _ANSI_RED, colour) if e.had_conflicts else "  "
         row = (
             f"{idx:<4} {e.timestamp:<27} {e.operation:<10} "
-            f"{e.base_file:<24} {patch:<24} "
+            f"{base:<24} {patch:<24} "
             f"{_c(str(e.keys_added), _ANSI_GREEN, colour):>2} "
             f"{_c(str(e.keys_removed), _ANSI_RED, colour):>2} "
             f"{_c(str(e.keys_modified), _ANSI_YELLOW, colour):>2}"
